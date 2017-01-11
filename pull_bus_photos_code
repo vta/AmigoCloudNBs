@@ -1,0 +1,77 @@
+#https://www.amigocloud.com/api/v1/users/71/projects/3098/datasets
+#https://www.amigocloud.com/api/v1/users/71/projects/3098/datasets/27816/related_tables
+#https://www.amigocloud.com/api/v1/related_tables/1129
+#https://www.amigocloud.com/api/v1/related_tables/1168
+#https://www.amigocloud.com/api/v1/related_tables/1167
+
+from pprint import pprint
+from amigocloud import AmigoCloud
+import pandas as pd
+
+#Read Only Token
+token = #
+
+ac = AmigoCloud(token)
+me = ac.get('me')
+me['id']
+projects = ac.get(me['visible_projects'])
+
+#busstopinv_update
+PROJECT_OWNER = me['id']
+PROJECT_ID = 3098
+DATASET_ID = 27816
+
+bustops=pd.read_csv('busstops_bascom.csv')
+
+counter = 0
+for each in bustops['amigo_id']:
+    rtiid=bustops['rtiid'][counter]
+    AMIGO_ID=each
+
+    #Grab 1167
+    dataset_url = '/related_tables/1167/entries?source_amigo_id={amigo}'
+    dataset = ac.get(dataset_url.format(amigo=AMIGO_ID))
+    if(dataset['count']!=0):
+        SOURCE_AMIGO_ID=dataset['data'][0]['source_amigo_id']
+        AMIGO_PICTURE_ID=dataset['data'][0]['amigo_id']
+        S3_FILENAME=dataset['data'][0]['s3_filename']
+        image_url = '/related_tables/1167/files/{source_amigo_id}/{amigo_picture_id}/{s3_filename}'
+        image = ac.get(image_url.format(source_amigo_id=SOURCE_AMIGO_ID,amigo_picture_id= AMIGO_PICTURE_ID,s3_filename=S3_FILENAME), raw=True)
+        thumbnail_nam = 'rtiid_' +str(rtiid) + '_gwt.png'
+        with open(thumbnail_nam, 'wb') as thumbnail:
+            thumbnail.write(image)
+    else:
+        print(dataset)
+    
+    #Grab 1129
+    dataset_url = '/related_tables/1129/entries?source_amigo_id={amigo}'
+    dataset = ac.get(dataset_url.format(amigo=AMIGO_ID))
+    if(dataset['count']!=0):
+        SOURCE_AMIGO_ID=dataset['data'][0]['source_amigo_id']
+        AMIGO_PICTURE_ID=dataset['data'][0]['amigo_id']
+        S3_FILENAME=dataset['data'][0]['s3_filename']
+        image_url = '/related_tables/1129/files/{source_amigo_id}/{amigo_picture_id}/{s3_filename}'
+        image = ac.get(image_url.format(source_amigo_id=SOURCE_AMIGO_ID,amigo_picture_id= AMIGO_PICTURE_ID,s3_filename=S3_FILENAME), raw=True)
+        thumbnail_nam = 'rtiid_' +str(rtiid) + '_g.png'
+        with open(thumbnail_nam, 'wb') as thumbnail:
+            thumbnail.write(image)
+    else:
+        print(dataset)
+    
+    #Grab 1168
+    dataset_url = '/related_tables/1168/entries?source_amigo_id={amigo}'
+    dataset = ac.get(dataset_url.format(amigo=AMIGO_ID))
+    if(dataset['count']!=0):
+        print(dataset['count'])
+        SOURCE_AMIGO_ID=dataset['data'][0]['source_amigo_id']
+        AMIGO_PICTURE_ID=dataset['data'][0]['amigo_id']
+        S3_FILENAME=dataset['data'][0]['s3_filename']
+        image_url = '/related_tables/1168/files/{source_amigo_id}/{amigo_picture_id}/{s3_filename}'
+        image = ac.get(image_url.format(source_amigo_id=SOURCE_AMIGO_ID,amigo_picture_id= AMIGO_PICTURE_ID,s3_filename=S3_FILENAME), raw=True)
+        thumbnail_nam = 'rtiid_' +str(rtiid) + '_gat.png'
+        with open(thumbnail_nam, 'wb') as thumbnail:
+            thumbnail.write(image)
+    else:
+        print(dataset)
+    print counter
+    counter+=1
