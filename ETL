@@ -1,0 +1,3 @@
+ETL - Extraction Translation Loading
+Let's take a look at how we can leverage the ETL functionality in AmigoCloud to enable the automation of file translation.
+Upload GTFS, download GeoJson, shapefile...
